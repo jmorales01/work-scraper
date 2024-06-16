@@ -2,6 +2,16 @@
 
 Este proyecto combina web scraping y un bot de Discord utilizando DiscordJS y Puppeteer. El bot puede interactuar con los usuarios en un servidor de Discord y realizar tareas automatizadas en la web, como extraer información de sitios web y proporcionar respuestas basadas en esos datos.
 
+## Estadísticas del Repositorio 📊
+
+![Estado del Proyecto](https://img.shields.io/badge/estado-en%20desarrollo-brightgreen)
+![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![GitHub stars](https://img.shields.io/github/stars/jmorales01/hackaton-devs-404)
+![GitHub PRs](https://img.shields.io/github/issues-pr/jmorales01/hackaton-devs-404)
+![GitHub forks](https://img.shields.io/github/forks/jmorales01/hackaton-devs-404)
+![GitHub issues](https://img.shields.io/github/issues/jmorales01/hackaton-devs-404)
+
+
 ## Tecnologías Utilizadas 💻
 
 - **MySQL** (v8.0.27) [![MySQL](https://img.icons8.com/color/48/000000/mysql.png)](https://www.mysql.com/)
@@ -10,7 +20,6 @@ Este proyecto combina web scraping y un bot de Discord utilizando DiscordJS y Pu
 - **Docker** (v20.10.8) [![Docker](https://img.icons8.com/color/48/000000/docker.png)](https://www.docker.com/)
 - **DiscordJS** (v14.15.3) [![DiscordJS](https://img.icons8.com/color/48/000000/discord-logo.png)](https://discord.js.org/)
 - **Puppeteer** (v22.11.0) [![Puppeteer](https://img.icons8.com/color/48/000000/chrome.png)](https://pptr.dev/)
-
 
 
 ## Instalación y Configuración 🛠️
