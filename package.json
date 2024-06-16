@@ -1,0 +1,19 @@
+{
+  "name": "work-scrap",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file .env --watch src/index.js",
+    "bot": "node --env-file .env --watch src/discord/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Seleccionar por ID\r `page.$('#idDelElemento');`\r Seleccionar por clase\r `page.$('.claseDelElemento');`\r Seleccionar por etiqueta\r `page.$('p');`\r Seleccionar por atributo\r `page.$('[data-test=\"example\"]');`\r Otras comvinaciones\r ```\r     'button[data-action=\"submit\"]'\r ```",
+  "dependencies": {
+    "discord.js": "^14.15.3",
+    "puppeteer": "^22.11.0"
+  }
+}
