@@ -18,39 +18,109 @@ export const scrapeJobsLinkedin = async () => {
     await page.click('button[aria-label="Inicia sesión"]');
 
     await page.waitForNavigation();
-    await page.waitForSelector('ul[class="scaffold-layout__list-container"]');
+    await page.waitForSelector('ul.scaffold-layout__list-container');
 
-    const logIn = await page.evaluate(() => {
-        return document.querySelector('button#ember28') === null;
-    });
+    // Validar que el inicio de sesión haya sido exitoso
+    // const logIn = await page.evaluate(() => {
+    //     return document.querySelector('button.global-nav__primary-link') === null;
+    // });
 
-    const works = await page.evaluate(() => {
-        if (logIn) {
-            return [];
-        }
-        const elements = document.querySelectorAll('ul[class="scaffold-layout__list-container"] li#ember260');
-        const works = [];
+    // if (!logIn) {
+    //     console.error('Error en el inicio de sesión.');
+    //     await browser.close();
+    //     return [];
+    // }
 
-        elements.forEach(element => {
-            let data = {};
+    // Función para hacer scroll hasta el final de la página
+    const autoScroll = async (page) => {
+        await page.evaluate(async () => {
+            const scrollContainer = document.querySelector('.jobs-search-results-list');
+            await new Promise((resolve) => {
+                let totalHeight = 0;
+                const distance = 100;
+                const timer = setInterval(() => {
+                    const scrollHeight = scrollContainer.scrollHeight;
+                    scrollContainer.scrollBy(0, distance);
+                    totalHeight += distance;
 
-            data.url = element.querySelector('div#ember265 a').href;
-            data.url_image = element.querySelector('img').src;
-            data.title = element.querySelector('div#ember265 > strong').innerText;
-            data.company = element.querySelector('div#ember267 span').innerText;
+                    if (totalHeight >= scrollHeight) {
+                        clearInterval(timer);
+                        resolve();
+                    }
+                }, 100);
+            });
+        });
+    };
 
-            var elem = element.querySelector('div#ember332 > li').innerText; // Ate, Perú (En remoto)
-            data.location = elem.substring(0, elem.indexOf('(')); // Ate, Perú
-            data.type = elem.substring(elem.indexOf('(') + 1, elem.length - 1);  // En remoto
+    const works = [];
 
-            works.push(data);
+    // Función para scrapear una sola página de resultados
+    const scrapePage = async () => {
+        await autoScroll(page);
+
+        const newWorks = await page.evaluate(() => {
+            const elements = document.querySelectorAll('ul.scaffold-layout__list-container li');
+            const works = [];
+
+            elements.forEach(element => {
+                let data = {};
+
+                const linkElement = element.querySelector('a[href*="/jobs/view/"]');
+                if (linkElement) {
+                    data.url = linkElement.href;
+                }
+
+                const imageElement = element.querySelector('img');
+                if (imageElement) {
+                    data.url_image = imageElement.src;
+                }
+
+                const titleElement = element.querySelector('a span');
+                if (titleElement) {
+                    data.title = titleElement.innerText.trim();
+                }
+
+                const companyElement = element.querySelector('h4 span');
+                if (companyElement) {
+                    data.company = companyElement.innerText.trim();
+                }
+
+                const locationTypeElement = element.querySelector('ul li');
+                if (locationTypeElement) {
+                    const locationTypeText = locationTypeElement.innerText.trim();
+                    const locationMatch = locationTypeText.match(/^(.*?)\s*\(/);
+                    const typeMatch = locationTypeText.match(/\((.*?)\)/);
+
+                    data.location = locationMatch ? locationMatch[1] : 'No especificado';
+                    data.type = typeMatch ? typeMatch[1] : 'No especificado';
+                }
+
+                works.push(data);
+            });
+
+            return works;
         });
 
-        return works;
-    });
+        works.push(...newWorks);
+    };
+
+    // Scraping de todas las páginas de resultados
+    let hasNextPage = true;
+    while (hasNextPage) {
+        await scrapePage();
+
+        // Intentar navegar a la siguiente página si existe
+        const nextPageButton = await page.$('button[aria-label="Página siguiente"]');
+        if (nextPageButton) {
+            await nextPageButton.click();
+            await page.waitForNavigation();
+        } else {
+            hasNextPage = false;
+        }
+    }
 
     console.log('Informacion extraida:');
     console.log(works);
-    await browser.close();
+    // await browser.close();
     return works;
 };
