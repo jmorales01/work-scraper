@@ -11,8 +11,6 @@ const client = new Client({
 
 client.once('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
-
-    sendMessage(client, process.env.CHANNEL_UTP_JOBS_ID, 'Hola, soy un bot en prueba de Discord!');
 });
 
 
@@ -29,3 +27,32 @@ client.on('messageCreate', async (message) => {
 });
 
 client.login(process.env.DISCORD_BOT_TOKEN);
+
+const sendMessageWorks = async (array) => {
+
+    const channel = await client.channels.fetch(process.env.CHANNEL_UTP_JOBS_ID);
+
+    const messages = array.map(work => `
+        **${work.company}**\n
+        *${work.type}* -*- *Lugar:* ${work.location} -*- *Fecha:* ${work.created}\n
+        *${work.title}*\n
+        - [URL del trabajo](${work.url})\n
+        - [URL del trabajo](${work.url})\n
+        **Gracias** 🙈💥
+
+
+        `);
+        
+    if (messages.length > 0) {
+        for (const message of messages) {
+            await channel.send(message);
+        }
+    } else {
+        await channel.send('No new jobs found.');
+    }
+}
+
+
+export { 
+    sendMessageWorks 
+}
