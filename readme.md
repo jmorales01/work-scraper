@@ -80,10 +80,14 @@ Si te gusta mi trabajo y quieres apoyarme, ¡considera hacer una donación! Tu a
 Gracias por tu generosidad y por apoyar mi trabajo. 🎉
 
 
+
+
+
+
+
 ---
 
-##¡Gracias por visitar mi repositorio! 🌟🧑‍💻
-
+## ¡Gracias por visitar mi repositorio! 🌟🧑‍💻
 
 ---
 <div align="center">
