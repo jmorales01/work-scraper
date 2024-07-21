@@ -71,6 +71,15 @@ Siga los siguientes pasos para configurar el proyecto localmente:
 
 Este proyecto está bajo la licencia MIT. Consulte el archivo [LICENSE](LICENSE) para más detalles.
 
+## Donaciones 💰
+
+Si te gusta mi trabajo y quieres apoyarme, ¡considera hacer una donación! Tu apoyo es muy apreciado. 🙏
+
+[![PayPal](https://img.shields.io/badge/PayPal-Donate-blue?style=for-the-badge&logo=paypal)](https://paypal.me/jmoralesv24?country.x=PE&locale.x=es_XC)
+
+Gracias por tu generosidad y por apoyar mi trabajo. 🎉
+
+
 ---
 
 ##¡Gracias por visitar mi repositorio! 🌟🧑‍💻
