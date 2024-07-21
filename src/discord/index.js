@@ -33,14 +33,12 @@ const sendMessageWorks = async (array) => {
     const channel = await client.channels.fetch(process.env.CHANNEL_UTP_JOBS_ID);
 
     const messages = array.map(work => `
-        **${work.company}**\n
-        *${work.type}* -*- *Lugar:* ${work.location} -*- *Fecha:* ${work.created}\n
-        *${work.title}*\n
-        - [URL del trabajo](${work.url})\n
-        - [URL del trabajo](${work.url})\n
-        **Gracias** 🙈💥
-
-
+        **${work.title}**
+        __**Empresa :**__ ${work.company}
+        __**Tipo :**__ ${work.type}
+        **Lugar :** ${work.location}
+        **Fecha :** ${work.created}
+        **Link :** [URL del trabajo](${work.url})
         `);
         
     if (messages.length > 0) {
