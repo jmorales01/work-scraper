@@ -13,19 +13,6 @@ client.once('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 });
 
-
-
-client.on('messageCreate', async (message) => {
-    if (message.author.bot) return;
-    console.log(message.channel.id);
-
-    if (message.content === '!ping') {
-        await sendMessage(client, message.channel.id, 'Pong!');
-    } else if (message.content === '!reply') {
-        await replyMessage(message, '¡Hola! Soy un bot respondiendo.');
-    }
-});
-
 client.login(process.env.DISCORD_BOT_TOKEN);
 
 const sendMessageWorks = async (array) => {
@@ -49,6 +36,19 @@ const sendMessageWorks = async (array) => {
         await channel.send('No new jobs found.');
     }
 }
+
+
+// Esto es un bot para enviar mensajes
+client.on('messageCreate', async (message) => {
+    if (message.author.bot) return;
+    console.log(message.channel.id);
+
+    if (message.content === '!ping') {
+        await sendMessage(client, message.channel.id, 'Pong!');
+    } else if (message.content === '!reply') {
+        await replyMessage(message, '¡Hola! Soy un bot respondiendo.');
+    }
+});
 
 
 export { 
