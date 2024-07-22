@@ -11,12 +11,12 @@ app.listen(app.get('port'), () => {
 cron.schedule('*/5 * * * *', async () => {
     console.log('***** Iniciando ejecución *****');
 
-    const works = [];
-    works = await scrapeJobsUtp();
+    
+    const works = await scrapeJobsUtp();
     // const works = await scrapeJobsLinkedin();
 
-    await sendMessageWorks(works);
     console.log(works);
+    await sendMessageWorks(works);
 },
 {
     scheduled: true,

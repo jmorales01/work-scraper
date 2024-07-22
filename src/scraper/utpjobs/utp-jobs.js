@@ -7,7 +7,7 @@ export const scrapeJobsUtp = async () => {
     });
 
     const page = await browser.newPage();
-    await page.goto(process.env.URL_UTP_JOBS);
+    await page.goto(process.env.URL_UTP_JOBS, { waitUntil: 'networkidle2' });
 
     await page.waitForSelector('a.item-block');
 
@@ -35,9 +35,8 @@ export const scrapeJobsUtp = async () => {
 
         return works;
     });
-
-    await browser.close();
-
+    console.log(works);
+    // await browser.close();
     return works;
 };
 
