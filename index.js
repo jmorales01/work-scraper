@@ -6,7 +6,7 @@ import { scrapeJobsLinkedin } from './src/scraper/linkedin/linkedin.js';
 cron.schedule('*/2 * * * *', async () => {
     console.log('***** Iniciando ejecución *****');
 
-    await scrapeJobsUtp();
+    // await scrapeJobsUtp();
     // await scrapeJobsLinkedin();
 },
 {

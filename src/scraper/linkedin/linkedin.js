@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import config from '../../config.js';
 import { sendMessageWorks } from '../../discord/index.js';
 
 export const scrapeJobsLinkedin = async () => {
@@ -9,9 +10,7 @@ export const scrapeJobsLinkedin = async () => {
 
     const page = await browser.newPage();
 
-    
-    const URL_LINKEDIN='https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3914895092&discover=recommended&discoveryOrigin=JOBS_HOME_JYMBII'
-    await page.goto(URL_LINKEDIN);
+    await page.goto(config.url.linkedin, { waitUntil: 'networkidle2' });
 
     await page.waitForSelector('#organic-div');
 
