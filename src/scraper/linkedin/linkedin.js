@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import { sendMessageWorks } from '../../discord/index.js';
 
 export const scrapeJobsLinkedin = async () => {
     const browser = await puppeteer.launch({
@@ -124,6 +125,7 @@ export const scrapeJobsLinkedin = async () => {
 
     console.log('Informacion extraida:');
     console.log(works);
+    await sendMessageWorks(works);
     // await browser.close();
     return works;
 };

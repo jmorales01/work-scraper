@@ -1,4 +1,5 @@
 import puppeteer from 'puppeteer';
+import { sendMessageWorks } from '../../discord/index.js';
 
 export const scrapeJobsUtp = async () => {
     const browser = await puppeteer.launch({
@@ -37,7 +38,9 @@ export const scrapeJobsUtp = async () => {
 
         return works;
     });
+    
     console.log(works);
+    await sendMessageWorks(works);
     // await browser.close();
     return works;
 };
