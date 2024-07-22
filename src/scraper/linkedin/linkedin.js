@@ -7,7 +7,10 @@ export const scrapeJobsLinkedin = async () => {
     });
 
     const page = await browser.newPage();
-    await page.goto(process.env.URL_LINKEDIN);
+
+    
+    const URL_LINKEDIN='https://www.linkedin.com/jobs/collections/recommended/?currentJobId=3914895092&discover=recommended&discoveryOrigin=JOBS_HOME_JYMBII'
+    await page.goto(URL_LINKEDIN);
 
     await page.waitForSelector('#organic-div');
 
