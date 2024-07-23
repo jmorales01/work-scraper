@@ -10,5 +10,11 @@
         "src": "/(.*)",
         "dest": "/"
         }
+    ],
+    "crons": [
+        {
+        "cron": "*/5 * * * *",
+        "dest": "./src/scraper/utpjobs/utp-jobs.js"
+        }
     ]
 }
