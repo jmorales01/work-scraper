@@ -1,5 +1,9 @@
 import express from 'express';
 import cors from 'cors';
+import cron from 'node-cron';
+
+import { bumeranRun } from './scraper/bumeran/main.js';
+import { linkedinRun } from './scraper/linkedin/main.js';
 
 const app = express();
 
@@ -18,7 +22,21 @@ import helloworld from './modules/helloworld/routes.js';
 import discord from './modules/discord/routes.js';
 
 
+
 app.use('/api/helloworld', helloworld);
 app.use('/api/discord/message', discord);
+
+cron.schedule('*/1 * * * *', async () => {
+    console.log('***** Iniciando ejecución *****');
+
+    await bumeranRun();
+    // await linkedinRun();
+
+    console.log('***** Fin de ejecución *****');
+},
+{
+    scheduled: true,
+    timezone: "America/Lima"
+});
 
 export { app };
