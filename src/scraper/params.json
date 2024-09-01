@@ -1,0 +1,8 @@
+{
+    "search": [
+        {"keywords": "Software", "location": ""}
+    ],
+    "filter": [
+        {"key": "fecha", "value": "desde ayer"}
+    ]
+}

@@ -1,5 +1,5 @@
 import { getData } from './puppeter.js';
-import search from '../search.json' assert { type: 'json' };
+import search from '../params.json' assert { type: 'json' };
 
 export const linkedinRun = async () => {
     try {

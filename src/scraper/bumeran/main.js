@@ -1,17 +1,8 @@
 import { getData } from './playwright.js';
-import search from '../search.json' assert { type: 'json' };
+import params from '../params.json' assert { type: 'json' };
 
 export const bumeranRun = async () => {
     try {
-
-        const params = {
-            search: search,
-            filter: {
-            // ordenar: 'fecha',
-            fecha: 'Hoy',
-            // jornada: 'tiempo completo',
-            }
-        };
 
         const data = await getData(params);
         console.log(data);

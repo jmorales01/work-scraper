@@ -1,29 +1,5 @@
-// @ts-check
-
 import { chromium } from 'playwright';
 import config from '../../config.js';
-
-const pages = [
-    {
-        name: 'computrabajo',
-        url: config.url.computrabajo,
-
-        checkPage: async (page) => {
-            try {
-                if (page && page.status() === 200) {
-                    console.log(`Página ok.`);
-                    return true;
-                } else {
-                    console.log(`Error al cargar la página: Código de estado ${page.status()}`);
-                    return false;
-                }
-            } catch (error) {
-                console.log(`No se pudo acceder a la página: ${error.message}`);
-                return false;
-            }
-        }
-    }
-];
 
 const searchJobs = async (page, params) => {
     const { keywords, location } = params;
@@ -46,42 +22,49 @@ const searchJobs = async (page, params) => {
 }
 
 const filterPage = async (page, params) => {
+    const { key, value } = params;
 
     try {
-        for (const [key, value] of Object.entries(params)) {
-            const filterElement = await page.evaluateHandle(({ key }) => {
-                const filters = Array.from(document.querySelectorAll('div.field_select_links'));
-                return filters.find(filter => filter.querySelector('p')?.innerText.trim().toLowerCase() === key.toLowerCase());
-            }, { key });
+        const filterElement = await page.evaluateHandle(({ key }) => {
+            const filters = Array.from(document.querySelectorAll('div.field_select_links'));
+            return filters.find(filter => filter.querySelector('p')?.innerText.trim().toLowerCase() === key.toLowerCase());
+        }, { key });
 
-            if (filterElement) {
-                await filterElement.asElement().click();
+        if (!filterElement) { return false; }
+        await filterElement.asElement().click();
 
-                // Busca el valor dentro del dropdown y haz click en él
-                await page.evaluate(({ filterElement, value }) => {
-                    const options = filterElement.querySelectorAll('li span.buildLink');
-                    const option = Array.from(options).find(option => option.innerText.trim().toLowerCase() === value.toLowerCase());
-                    if (option) option.click();
-                }, { filterElement, value });
+        // Busca la opción dentro del dropdown
+        const optionElementHandle = await page.evaluateHandle(({ filterElement, value }) => {
+            const options = filterElement.querySelectorAll('li span.buildLink');
+            return Array.from(options).find(option => option.innerText.trim().toLowerCase() === value.toLowerCase());
+        }, { filterElement, value });
 
-                await page.waitForNavigation({ waitUntil: 'networkidle' });
-            }
-        }
+        if (!optionElementHandle) { return false; }
+        const optionElement = optionElementHandle.asElement();
+        await optionElement.click();
+
+        // Espera a que la navegación esté completa después de aplicar el filtro
+        // await page.waitForNavigation({ waitUntil: 'networkidle' });
+        return true;
     } catch (error) {
         console.log(`Error en el filtro: ${error.message}`);
+        return false;
     }
 }
 
 const pullData = async (page) => {
     await page.waitForSelector('article.box_offer');
     console.log('Buscando datos...');
-    const result = await page.evaluate(() => {
+    const result = await page.evaluate(async () => {
         const works = [];
+        const cleanText = (text) => text.replace(/\n/g, '').replace(/<br\s*\/?>/g, ' | ').trim();
         try {
             
             const elements = document.querySelectorAll('article.box_offer');
 
-            elements.forEach(element => {
+            console.log(elements.length);
+
+            for (const element of elements) {
                 const data = {};
                 data.id = element.id;
 
@@ -91,24 +74,35 @@ const pullData = async (page) => {
                 const typeElement = element.querySelector('div.fs13.mt15 span.dIB.mr10');
                 const urlElement = element.querySelector('h2 a');
 
-                data.title = titleElement ? titleElement.innerText.trim() : 'N/A';
-                data.company = companyElement ? companyElement.innerText.trim() : 'N/A';
-                data.location = locationElement ? locationElement.innerText.trim() : 'N/A';
-                data.type = typeElement ? typeElement.innerText.trim() : 'N/A';
-                data.url = urlElement ? urlElement.href : 'N/A';
+                data.title = titleElement ? titleElement.innerText.trim() : null;
+                data.company = companyElement ? companyElement.innerText.trim() : null;
+                data.location = locationElement ? { "city": locationElement.innerText.trim() } : null;
+                data.type = typeElement ? typeElement.innerText.trim() : null;
+                data.url = urlElement ? urlElement.href : null;
                 data.date_posted = new Date().toISOString().slice(0, 10);
                 data.date_expires = null;
-                data.skills = [];
-                data.description = null;
+
+                await element.click();
+                const detailElement = document.querySelector('div.box_detail');
+                if (detailElement) {
+                    await new Promise(resolve => setTimeout(resolve, 1000));
+
+                    const descriptionElement = detailElement ? detailElement.querySelector('div.fs16') : null;
+                    const rawDescription = descriptionElement ? descriptionElement.innerHTML : null;
+                    if (rawDescription) {
+                        data.description = cleanText(rawDescription);
+                    } else {
+                        data.description = null;
+                    }
+                }
+
                 works.push(data);
-            });
+            }
         } catch (error) {
             return `Error en evaluate: ${error.message}`;
         }
-
         return works;
     });
-
     return result;
 };
 
@@ -132,52 +126,57 @@ const nextPagination = async (page) => {
         return false;
     }
 };
+const checkPage = async (page) => {
+    try {
+        if (page && page.status() === 200) {
+            console.log(`Página ok.`);
+            return true;
+        } else {
+            console.log(`Error al cargar la página: Código de estado ${page.status()}`);
+            return false;
+        }
+    } catch (error) {
+        console.log(`No se pudo acceder a la página: ${error.message}`);
+        return false;
+    }
+};
 
-;(async () => {
+export const getData = async (params) => {
     const browser = await chromium.launch({
-        headless: true
+        headless: false
     });
 
-    for (const pageConfig of pages) {
-        const { name, url, checkPage } = pageConfig;
+    const context = await browser.newContext({
+        userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0',
+        });
+    const page = await context.newPage();
+    const result = await page.goto(config.url.computrabajo, { waitUntil: 'networkidle' });
 
-        const context = await browser.newContext({
-            userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/109.0',
-          });
-        const page = await context.newPage();
-        
-        const result = await page.goto(url, { waitUntil: 'networkidle' });
+    const isPageActive = await checkPage(result);
+    if (!isPageActive) {
+        return [];
+    }
 
-        const isPageActive = await checkPage(result);
-        if (!isPageActive) {
-            return;
-        }
+    const rows = [];
+    for (let index = 0; index < params.search.length; index++) {
 
-        await searchJobs(page, { keywords: '', location: 'Lima' });
+        await searchJobs(page, params.search[index]);
+        const isFilterActive = await filterPage(page, params.filter[0]);
 
-        const params = {
-            // ordenar: 'fecha',
-            fecha: 'desde ayer',
-            // jornada: 'tiempo completo',
-        };
-
-        await filterPage(page, params);
-
-        const rows = [];
-        while (true) {
-            const data = await pullData(page);
-
-            const hasNext = await nextPagination(page);
-            console.log(hasNext);
-            if (!hasNext) {
-                break;
+        if(isFilterActive) {
+            while (true) {
+                const data = await pullData(page);
+                rows.push(...data);
+    
+                const hasNext = await nextPagination(page);
+                console.log(hasNext);
+                if (!hasNext) {
+                    break;
+                }
             }
-
-            rows.push(...data);
         }
-        console.log(rows);
     }
 
     await browser.close();
-})()
-
+    return rows;
+}

@@ -14,6 +14,7 @@
   "license": "ISC",
   "description": "Seleccionar por ID\r `page.$('#idDelElemento');`\r Seleccionar por clase\r `page.$('.claseDelElemento');`\r Seleccionar por etiqueta\r `page.$('p');`\r Seleccionar por atributo\r `page.$('[data-test=\"example\"]');`\r Otras comvinaciones\r ```\r     'button[data-action=\"submit\"]'\r ```",
   "dependencies": {
+    "@supabase/supabase-js": "^2.45.3",
     "cors": "^2.8.5",
     "discord.js": "^14.15.3",
     "express": "^4.19.2",
