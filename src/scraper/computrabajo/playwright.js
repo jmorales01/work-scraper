@@ -58,7 +58,7 @@ const filterPage = async (page, params) => {
 const pullData = async (page, keywords) => {
     await page.waitForSelector('article.box_offer');
     console.log('Buscando datos...');
-    const result = await page.evaluate(async () => {
+    const result = await page.evaluate(async (keywords) => {  // keywords como parámetro en evaluate
         const works = [];
         const cleanText = (text) => text.replace(/\n/g, '').replace(/<br\s*\/?>/g, ' | ').trim();
         try {
@@ -75,7 +75,7 @@ const pullData = async (page, keywords) => {
                 const urlElement = element.querySelector('h2 a');
 
                 data.code = element.id;
-                data.platform = 'computrabajo';
+                data.origin = 'computrabajo';
                 data.title = titleElement ? titleElement.innerText.trim() : null;
                 data.company = companyElement ? companyElement.innerText.trim() : null;
                 data.location = locationElement ? locationElement.innerText.trim() : null;
@@ -90,13 +90,9 @@ const pullData = async (page, keywords) => {
                 if (detailElement) {
                     await new Promise(resolve => setTimeout(resolve, 1000));
 
-                    const descriptionElement = detailElement ? detailElement.querySelector('div.fs16') : null;
+                    const descriptionElement = detailElement.querySelector('div.fs16');
                     const rawDescription = descriptionElement ? descriptionElement.innerHTML : null;
-                    if (rawDescription) {
-                        data.description = cleanText(rawDescription);
-                    } else {
-                        data.description = null;
-                    }
+                    data.description = rawDescription ? cleanText(rawDescription) : null;
                 }
                 works.push(data);
             }
@@ -104,7 +100,7 @@ const pullData = async (page, keywords) => {
             return `Error en evaluate: ${error.message}`;
         }
         return works;
-    });
+    }, keywords);
     return result;
 };
 
