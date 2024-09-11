@@ -1,6 +1,26 @@
 {
     "search": [
-        {"keywords": "Software", "location": ""}
+        {"keywords": "Frontend", "location": ""},
+        {"keywords": "Backend", "location": ""},
+        {"keywords": "Full Stack", "location": ""},
+        {"keywords": "Ingeniero DevOps", "location": ""},
+        {"keywords": "Ciberseguridad", "location": ""},
+        {"keywords": "Administrador de Bases de Datos", "location": ""},
+        {"keywords": "Desarrollador Móvil", "location": ""},
+        {"keywords": "Desarrollador Web", "location": ""},
+        {"keywords": "UX/UI", "location": ""},
+        {"keywords": "Ingeniero de IA", "location": ""},
+        {"keywords": "Científico de Datos", "location": ""},
+        {"keywords": "Ingeniero de Datos", "location": ""},
+        {"keywords": "Product Owner", "location": ""},
+        {"keywords": "Scrum Master", "location": ""},
+        {"keywords": "Ingeniero de Redes", "location": ""},
+        {"keywords": "Desarrollador de BI", "location": ""},
+        {"keywords": "Desarrollador de Videojuegos", "location": ""},
+        {"keywords": "IoT", "location": ""},
+        {"keywords": "DevSecOps", "location": ""},
+        {"keywords": "Arquitecto de Datos", "location": ""},
+        {"keywords": "Google Cloud", "location": ""}
     ],
     "filter": [
         {"key": "fecha", "value": "desde ayer"}

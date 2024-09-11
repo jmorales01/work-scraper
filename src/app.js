@@ -27,7 +27,7 @@ import discord from './modules/discord/routes.js';
 app.use('/api/helloworld', helloworld);
 app.use('/api/discord/message', discord);
 
-cron.schedule('*/2 * * * *', async () => {
+cron.schedule('*/10 * * * *', async () => {
     console.log('***** Iniciando ejecución *****');
 
     // await bumeranRun();

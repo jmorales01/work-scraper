@@ -43,8 +43,11 @@ const filterPage = async (page, params) => {
         const optionElement = optionElementHandle.asElement();
         await optionElement.click();
 
-        // Espera a que la navegación esté completa después de aplicar el filtro
-        // await page.waitForNavigation({ waitUntil: 'networkidle' });
+        const hasOffers = await page.evaluate(() => {
+            return document.querySelectorAll('article.box_offer').length > 0;
+        });
+
+        if (!hasOffers) {return false;}
         return true;
     } catch (error) {
         console.log(`Error en el filtro: ${error.message}`);
@@ -52,7 +55,7 @@ const filterPage = async (page, params) => {
     }
 }
 
-const pullData = async (page) => {
+const pullData = async (page, keywords) => {
     await page.waitForSelector('article.box_offer');
     console.log('Buscando datos...');
     const result = await page.evaluate(async () => {
@@ -62,25 +65,25 @@ const pullData = async (page) => {
             
             const elements = document.querySelectorAll('article.box_offer');
 
-            console.log(elements.length);
-
             for (const element of elements) {
                 const data = {};
-                data.id = element.id;
 
                 const titleElement = element.querySelector('h2 a');
                 const companyElement = element.querySelector('a.fc_base.t_ellipsis');
                 const locationElement = element.querySelector('p.fs16.fc_base.mt5 span.mr10');
-                const typeElement = element.querySelector('div.fs13.mt15 span.dIB.mr10');
+                const salaryElement = element.querySelector('div.fs13.mt15 span.dIB.mr10');
                 const urlElement = element.querySelector('h2 a');
 
+                data.code = element.id;
+                data.platform = 'computrabajo';
                 data.title = titleElement ? titleElement.innerText.trim() : null;
                 data.company = companyElement ? companyElement.innerText.trim() : null;
-                data.location = locationElement ? { "city": locationElement.innerText.trim() } : null;
-                data.type = typeElement ? typeElement.innerText.trim() : null;
+                data.location = locationElement ? locationElement.innerText.trim() : null;
+                // data.salary = salaryElement ? salaryElement.innerText.trim() : null;
                 data.url = urlElement ? urlElement.href : null;
                 data.date_posted = new Date().toISOString().slice(0, 10);
                 data.date_expires = null;
+                data.keywords = keywords;
 
                 await element.click();
                 const detailElement = document.querySelector('div.box_detail');
@@ -95,7 +98,6 @@ const pullData = async (page) => {
                         data.description = null;
                     }
                 }
-
                 works.push(data);
             }
         } catch (error) {
@@ -165,7 +167,7 @@ export const getData = async (params) => {
 
         if(isFilterActive) {
             while (true) {
-                const data = await pullData(page);
+                const data = await pullData(page, params.search[index]);
                 rows.push(...data);
     
                 const hasNext = await nextPagination(page);

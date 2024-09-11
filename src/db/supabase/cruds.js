@@ -1,27 +1,14 @@
 import { supabase } from './connection.js';
 
-const insertJobs = async (jobData) => {
-    const { data, error } = await supabase
+const insertJobs = async (data) => {
+    const { result, error } = await supabase
         .from('jobs')
-        .insert([
-            {
-                code: jobData.code,
-                title: jobData.title,
-                company: jobData.company,
-                location: jobData.location,
-                type: jobData.type,
-                url: jobData.url,
-                date_posted: jobData.date_posted,
-                date_expires: jobData.date_expires,
-                description: jobData.description,
-            },
-        ]);
+        .insert(data);
 
     if (error) {
-        console.error('Error al insertar datos:', error.message);
-    } else {
-        console.log('Datos insertados correctamente:', data);
+        return console.error('Error al insertar datos:', error.message);
     }
+    console.log('Datos insertados correctamente:', result);
 };
 
 export { insertJobs };
